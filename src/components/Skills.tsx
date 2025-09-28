@@ -40,26 +40,19 @@ function Skills() {
         >
           <div className="scroller__inner flex gap-4 sm:gap-6">
 
-            {/* Render daftar skill pertama kali */}
             {skills.map((skill, index) => (
-              // PERUBAHAN DI BARIS INI
               <div key={index} className="skill-item flex items-center gap-3 sm:gap-4 bg-card border px-6 py-3 sm:px-8 sm:py-4 whitespace-nowrap">
-                {/* PERUBAHAN DI BARIS INI */}
                 <span className={`text-2xl sm:text-3xl ${skill.color}`}>{skill.icon}</span>
                 <span className="font-medium text-card-foreground text-sm sm:text-base">{skill.name}</span>
               </div>
             ))}
 
-            {/* Render DUPLIKAT daftar skill untuk efek seamless loop */}
             {skills.map((skill, index) => (
-              // PERUBAHAN DI BARIS INI JUGA
               <div key={`duplicate-${index}`} aria-hidden="true" className="skill-item flex items-center gap-3 sm:gap-4 bg-card border px-6 py-3 sm:px-8 sm:py-4 whitespace-nowrap">
-                 {/* PERUBAHAN DI BARIS INI JUGA */}
                 <span className={`text-2xl sm:text-3xl ${skill.color}`}>{skill.icon}</span>
                 <span className="font-medium text-card-foreground text-sm sm:text-base">{skill.name}</span>
               </div>
             ))}
-
           </div>
         </div>
       </div>

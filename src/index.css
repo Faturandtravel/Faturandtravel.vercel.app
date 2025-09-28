@@ -134,32 +134,24 @@
   }
 }
 
-/* di file globals.css atau index.css */
-
 .scroller {
-  /* Efek fade di sisi kiri dan kanan */
   -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
   mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
 }
 
 .scroller__inner {
-  /* Mengatur agar lebar konten sesuai dengan isinya dan tidak wrap */
   width: max-content;
   
-  /* Menerapkan animasi */
   animation: scroll var(--duration) linear infinite;
 }
 
-/* Opsi: Hentikan animasi saat kursor diarahkan ke scroller */
 .scroller:hover .scroller__inner {
   animation-play-state: paused;
 }
 
-/* Definisi keyframes untuk animasi scroll */
+
 @keyframes scroll {
   to {
-    /* Menggeser elemen ke kiri sejauh setengah dari lebarnya
-       (karena kita punya 2 set daftar skill) */
-    transform: translateX(calc(-50% - 0.75rem)); /* 0.75rem adalah setengah dari gap (gap-6 -> 1.5rem) */
+    transform: translateX(calc(-50% - 0.75rem));
   }
 }

@@ -20,9 +20,7 @@ function Navbar() {
   ];
 
   return (
-    // Perubahan ada di baris ini
     <nav className="py-4 fixed top-0 left-0 w-full z-50 bg-white shadow-xs">
-      {/* Desktop Menu */}
       <div className="hidden md:flex text-xl justify-center font-semibold gap-8">
         {menuItems.map((item) => (
           <a key={item.label} href={`#${item.id}`} className={triggerClasses}>
@@ -31,7 +29,6 @@ function Navbar() {
         ))}
       </div>
 
-      {/* Mobile Menu */}
       <div className="md:hidden flex justify-between items-center px-4">
         <div className="text-xl font-semibold">Faturahman Saputra</div>
         <button

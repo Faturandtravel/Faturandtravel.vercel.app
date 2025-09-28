@@ -2,10 +2,7 @@ const HeroSection = () => {
   return (
     <div className="min-h-screen bg-white text-black flex items-center p-4 ">
       <div className="container mx-auto max-w-6xl">
-        {/* Kontainer untuk layout split, flex-col di mobile, flex-row di desktop */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
-
-          {/* Bagian Kiri: Teks */}
           <div className="w-full md:w-1/2 text-left">
             <div className="flex justify-end md:justify-start mb-4">
               <p className="text-base sm:text-lg">Bogor, Indonesia</p>
@@ -22,10 +19,9 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Bagian Kanan: Gambar */}
           <div className="w-full md:w-1/2 flex justify-center md:justify-end mt-6 md:mt-0">
             <img
-              src="./Foto.png" // Ganti dengan URL foto profil Anda
+              src="./Foto.png"
               className="w-68 h-auto sm:w-84 sm:h-auto md:w-100 md:h-auto object-cover "
             />
           </div>
