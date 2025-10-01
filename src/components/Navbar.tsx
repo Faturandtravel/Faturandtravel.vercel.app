@@ -30,7 +30,7 @@ function Navbar() {
       </div>
 
       <div className="md:hidden flex justify-between items-center px-4">
-        <div className="text-xl font-semibold">Faturahman Saputra</div>
+        <div className="text-sm font-semibold">Faturahman Saputra</div>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="text-black focus:outline-none"

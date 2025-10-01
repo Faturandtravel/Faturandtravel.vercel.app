@@ -1,102 +1,129 @@
-"use client" 
+"use-client";
 
 import { useEffect, useState } from 'react';
 
-interface Particle {
-  id: number; x: number; y: number; vx: number; vy: number; life: number;
+// Tipe untuk posisi mouse
+interface MousePosition {
+  x: number;
+  y: number;
 }
-const createBoxShadow = (coords: number[][], color: string, pixelSize: number) => {
-  return coords.map(p => `${p[0] * pixelSize}px ${p[1] * pixelSize}px 0 0 ${color}`).join(', ');
-};
 
-const SimplePixelArrowCursor = () => {
-  const PIXEL_SIZE = 2;
-  const pixelCoords = [
-    [0,0], [0,1],[1,1], [0,2],[1,2],[2,2], [0,3],[1,3],[2,3],[3,3],
-    [0,4],[1,4],[2,4], [0,5],[1,5], [0,6],
-  ];
-  const style = {
-    width: `${PIXEL_SIZE}px`, height: `${PIXEL_SIZE}px`, backgroundColor: 'transparent',
-    boxShadow: createBoxShadow(pixelCoords, '#000', PIXEL_SIZE),
-    position: 'absolute' as const, top: 0, left: 0,
-  };
-  return <div style={style}></div>;
-};
-
-const SimplePixelHandCursor = () => {
-    const PIXEL_SIZE = 2;
-    const pixelCoords = [
-        [0,0], [1,0], [2,0], [3,0], [4,0], [0,1], [5,1], [0,2], [5,2],
-        [0,3], [1,3], [2,3], [3,3], [4,3], [1,4], [2,4], [3,4],
-    ];
-    const style = {
-        width: `${PIXEL_SIZE}px`, height: `${PIXEL_SIZE}px`, backgroundColor: 'transparent',
-        boxShadow: createBoxShadow(pixelCoords, '#000', PIXEL_SIZE),
-        position: 'absolute' as const, top: 0, left: 0,
-    };
-    return <div style={style}></div>;
-};
-
-const MouseEffects = () => {
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
-  const [particles, setParticles] = useState<Particle[]>([]);
-  const [isHovering, setIsHovering] = useState(false);
+const SquareTrailCursor = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [mousePos, setMousePos] = useState<MousePosition>({ x: -100, y: -100 });
+  const [isHovering, setIsHovering] = useState<boolean>(false);
+  const [prevMousePos, setPrevMousePos] = useState<MousePosition>({ x: -100, y: -100 });
 
   useEffect(() => {
-    document.body.style.cursor = 'none';
+    const mediaQuery = window.matchMedia('(pointer: coarse)');
+    const checkDevice = () => setIsMobile(mediaQuery.matches);
+    checkDevice();
+    mediaQuery.addEventListener('change', checkDevice);
+    return () => mediaQuery.removeEventListener('change', checkDevice);
+  }, []);
 
-    const handleMouseMove = (e: MouseEvent) => { setMousePos({ x: e.clientX, y: e.clientY }); if (Math.random() > 0.7) { const newParticle: Particle = { id: Date.now() + Math.random(), x: e.clientX, y: e.clientY, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, life: 50 }; setParticles(prev => [...prev, newParticle]); } };
-    const handleMouseEnter = () => setIsHovering(true); const handleMouseLeave = () => setIsHovering(false);
-    
-    const interactiveElements = document.querySelectorAll('button, a, [role="button"]');
-    interactiveElements.forEach(el => { el.addEventListener('mouseenter', handleMouseEnter); el.addEventListener('mouseleave', handleMouseLeave); });
-    
-    document.addEventListener('mousemove', handleMouseMove);
-    
+  useEffect(() => {
+    if (isMobile) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      const currentPos = { x: e.clientX, y: e.clientY };
+      setMousePos(currentPos);
+      setTimeout(() => setPrevMousePos(currentPos), 50);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.cursor = 'auto';
+      return;
+    }
+    document.body.style.cursor = 'none';
+    const handleMouseEnter = () => setIsHovering(true);
+    const handleMouseLeave = () => setIsHovering(false);
+    const interactiveElements = document.querySelectorAll(
+      'a, button, [role="button"], input, textarea, select'
+    );
+    interactiveElements.forEach((el) => {
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mouseleave', handleMouseLeave);
+    });
     return () => {
       document.body.style.cursor = 'auto';
-      document.removeEventListener('mousemove', handleMouseMove);
-      interactiveElements.forEach(el => {
+      interactiveElements.forEach((el) => {
         el.removeEventListener('mouseenter', handleMouseEnter);
         el.removeEventListener('mouseleave', handleMouseLeave);
       });
     };
-  }, []);
+  }, [isMobile]);
 
-  useEffect(() => {
-    const animate = () => {
-      setParticles(prev => prev.map(p => ({ ...p, x: p.x + p.vx, y: p.y + p.vy, life: p.life - 1 })).filter(p => p.life > 0));
-    };
-    const interval = setInterval(animate, 16);
-    return () => clearInterval(interval);
-  }, []);
+  const deltaX = mousePos.x - prevMousePos.x;
+  const deltaY = mousePos.y - prevMousePos.y;
+  const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+
+  const followerStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: `${mousePos.y}px`,
+    left: `${mousePos.x}px`,
+    width: '30px',
+    height: '30px',
+    border: '2px solid #36302b',
+    pointerEvents: 'none',
+    zIndex: 9999,
+    transform: `
+      translate(-50%, -50%) 
+      scale(${isHovering ? 1.5 : 1}) 
+      rotate(${isHovering ? 0 : angle}deg)
+    `, // <-- NILAI DIUBAH DI SINI
+    transition: 'transform 0.15s ease-out',
+  };
+
+  const dotStyle: React.CSSProperties = {
+    position: 'fixed',
+    top: `${mousePos.y}px`,
+    left: `${mousePos.x}px`,
+    width: '6px',
+    height: '6px',
+    backgroundColor: '#36302b',
+    pointerEvents: 'none',
+    zIndex: 9999,
+    transform: 'translate(-50%, -50%)',
+    opacity: isHovering ? 0 : 1,
+    transition: 'width 0.2s ease, height 0.2s ease, opacity 0.2s ease',
+  };
+
+  const crossHorizontal: React.CSSProperties = {
+    position: 'fixed',
+    top: `${mousePos.y}px`,
+    left: `${mousePos.x}px`,
+    width: '25px',
+    height: '2px',
+    backgroundColor: '#36302b',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 10000,
+    opacity: isHovering ? 1 : 0,
+    transition: 'opacity 0.2s ease-in-out',
+    pointerEvents: 'none',
+  };
+
+  const crossVertical: React.CSSProperties = {
+    ...crossHorizontal,
+    width: '2px',
+    height: '25px',
+  };
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <>
-      <div
-        style={{
-          position: 'fixed',
-          left: mousePos.x,
-          top: mousePos.y,
-          pointerEvents: 'none',
-          zIndex: 9999,
-        }}
-      >
-        {isHovering ? <SimplePixelHandCursor /> : <SimplePixelArrowCursor />}
-      </div>
-      {particles.map(particle => (
-        <div
-          key={particle.id}
-          style={{
-            position: 'fixed', left: particle.x, top: particle.y,
-            width: '2px', height: '2px',
-            backgroundColor: 'rgba(255,255,255,0.5)',
-            pointerEvents: 'none', zIndex: 9998,
-          }}
-        />
-      ))}
+      <div style={followerStyle} />
+      <div style={dotStyle} />
+      <div style={crossHorizontal} />
+      <div style={crossVertical} />
     </>
   );
 };
 
-export default MouseEffects;
+export default SquareTrailCursor;
