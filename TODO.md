@@ -1,4 +1,0 @@
-- [x] Remove particle effects from MouseEffects.tsx
-- [x] Replace SimplePixelArrowCursor with a simple small circle
-- [x] Replace SimplePixelHandCursor with a larger circle for hover
-- [x] Update the component to use the new cursors
